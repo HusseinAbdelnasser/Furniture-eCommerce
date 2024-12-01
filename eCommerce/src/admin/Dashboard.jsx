@@ -15,25 +15,25 @@ const Dashboard = () => {
              <section>
                  <Container>
                      <Row>
-                         <Col className='lg-3'>
+                         <Col className='mb-3' md='6' lg='3'>
                             <div className="revenue__box">
                                <h5>Total Sales</h5>
                                <span>{orders.length}</span>
                             </div>
                          </Col>
-                         <Col className='lg-3'>
+                         <Col className='mb-3' md='6' lg='3'>
                             <div className="order__box">
                                <h5>Orders</h5>
                                <span>{orders.length}</span>
                             </div>
                          </Col>
-                         <Col className='lg-3'>
+                         <Col className='mb-3' md='6' lg='3'>
                             <div className="products__box">
                                <h5>Total Products</h5>
                                <span>{products.length}</span>
                             </div>
                          </Col>
-                         <Col className='lg-3'>
+                         <Col className='mb-3' md='6' lg='3'>
                             <div className="users__box">
                                <h5>Total users</h5>
                                <span>{users.length}</span>

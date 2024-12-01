@@ -19,7 +19,7 @@ const ProductDetails = () => {
   const reviewUser = useRef("");
   const reviewMsg = useRef("");
   const [rating, setRating] = useState();
-  const { id } = useParams();
+  let { id } = useParams();
   const {data: products} = UseGetData('products');
 
   const docRef = doc(db, 'products', id);
@@ -38,7 +38,7 @@ const ProductDetails = () => {
   
   const {
     imgUrl,
-    title,
+    productName,
     price,
     description,
     shortDesc,
@@ -66,8 +66,8 @@ const ProductDetails = () => {
     window.scrollTo(0, 0);
   }, [product]);
   return (
-    <Helmet title={title}>
-      <CommonSection title={title} />
+    <Helmet title={productName}>
+      <CommonSection title={productName} />
 
       <section className="pt-0">
         <Container>
@@ -77,7 +77,7 @@ const ProductDetails = () => {
             </Col>
             <Col lg="6">
               <div className="product__details">
-                <h2>{title}</h2>
+                <h2>{productName}</h2>
                 <div className="product__rating d-flex align-items-center gap-5 mb-3">
                   <div>
                     <span>
@@ -110,8 +110,12 @@ const ProductDetails = () => {
                 <p className="mt-3">{shortDesc}</p>
                 <motion.button
                   onClick={async () => {
-                    await setDoc(doc(db, `cart ${currentUser.uid}`, item.id), {
-                      ...item,
+                    await setDoc(doc(db, `cart ${currentUser?.uid}`, id), {
+                      id,
+                      productName,
+                      price,
+                      imgUrl,
+                      category,
                       quantity: 1,
                     });
                     toast.success("Product added to cart!");

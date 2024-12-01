@@ -67,6 +67,16 @@
     justify-content: center;
 }
 
+@media only screen and (max-width: 768px){
+    .admin__menu-list{
+      flex-direction: column;
+    }
+    .admin__menu{
+        height: 270px;
+    }
+  }
+  
+
 .admin__menu-list .admin__menu-item a{
     color: var(--primary-color);
     font-weight: 500;
