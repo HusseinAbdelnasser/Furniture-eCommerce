@@ -7,64 +7,62 @@ import "../styles/product-details.css";
 import { motion } from "framer-motion";
 import ProductList from "../components/UI/ProductList";
 import { toast } from "react-toastify";
-import {db} from '../firebase.config';
-import {doc, setDoc, getDoc} from 'firebase/firestore';
+import { db } from "../firebase.config";
+import { doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import UseGetData from "../custom-hooks/useGetData";
 import UseAuth from "../custom-hooks/useAuth";
 
 const ProductDetails = () => {
-  const {currentUser} = UseAuth();
-  const [product, setProduct] = useState({})
+  const { currentUser } = UseAuth();
+  const [product, setProduct] = useState({});
   const [tab, setTab] = useState("desc");
-  const reviewUser = useRef("");
-  const reviewMsg = useRef("");
+
+  const [reviewUser, setReviewUser] = useState("");
+  const [reviewMessage, setReviewMessage] = useState();
   const [rating, setRating] = useState();
   let { id } = useParams();
-  const {data: products} = UseGetData('products');
+  const { data: products } = UseGetData("products");
 
-  const docRef = doc(db, 'products', id);
+  const docRef = doc(db, "products", id);
 
   useEffect(() => {
     const getProduct = async () => {
       const docSnap = await getDoc(docRef);
-      if(docSnap.exists()){
-         setProduct(docSnap.data());
+      if (docSnap.exists()) {
+        setProduct(docSnap.data());
       } else {
         console.log("No Product!");
       }
-    }
+    };
     getProduct();
   }, []);
-  
-  const {
-    imgUrl,
-    productName,
-    price,
-    description,
-    shortDesc,
-    category,
-  } = product;
+
+  const { imgUrl, productName, price, description, shortDesc, category, reviews } =
+    product;
 
   const relatedProducts = products.filter((item) => item.category === category);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    const reviewUserName = reviewUser.current.value;
-    const reviewUserMsg = reviewUserMsg.current.value;
+    await updateDoc(doc(db, "products", id), {
+      reviews: arrayUnion({
+        reviewUser,
+        reviewMessage,
+        rating,
+      }),
+    });
 
-    const reviewObj = {
-      userName: reviewUserName,
-      text: reviewUserMsg,
-      rating,
-    };
-
+    setReviewUser("");
+    setReviewMessage("");
+    setRating("");
     toast.success("Review Submitted");
   };
-
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [product]);
+  
+  let avgRating = 0
   return (
     <Helmet title={productName}>
       <CommonSection title={productName} />
@@ -146,7 +144,7 @@ const ProductDetails = () => {
                   className={`${tab === "rev" ? "active__tab" : ""}`}
                   onClick={() => setTab("rev")}
                 >
-                  Reviews 
+                  Reviews
                 </h6>
               </div>
 
@@ -157,20 +155,19 @@ const ProductDetails = () => {
               ) : (
                 <div className="product__review mt-5">
                   <div className="review__wrapper">
-                    {/* 
+                    
                     <ul>
-                      {reviews.map((item, index) => {
+                      {reviews.map((item, index) => (
                         <li key={index} className="mb-4">
-                          <h6>Jhon Doe</h6>
+                          <h6>{item.reviewUser}</h6>
                           <span>
                             {item.rating}
-                            {rating}
                           </span>
-                          <p>{item.text}</p>
-                        </li>;
-                      })}
+                          <p>{item.reviewMessage}</p>
+                        </li>
+                      ))}
                     </ul>
-                    */}
+                    
 
                     <div className="review__form">
                       <h4>Leave Your Experience</h4>
@@ -179,7 +176,8 @@ const ProductDetails = () => {
                           <input
                             type="text"
                             placeholder="Enter Name"
-                            ref={reviewUser}
+                            value={reviewUser}
+                            onChange={(e) => setReviewUser(e.target.value)}
                             required
                           />
                         </div>
@@ -219,7 +217,8 @@ const ProductDetails = () => {
 
                         <div className="form__group">
                           <textarea
-                            ref={reviewMsg}
+                            value={reviewMessage}
+                            onChange={(e) => setReviewMessage(e.target.value)}
                             rows={4}
                             type="text"
                             placeholder="Review Message..."
