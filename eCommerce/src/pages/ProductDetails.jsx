@@ -37,8 +37,15 @@ const ProductDetails = () => {
     getProduct();
   }, []);
 
-  const { imgUrl, productName, price, description, shortDesc, category, reviews } =
-    product;
+  const {
+    imgUrl,
+    productName,
+    price,
+    description,
+    shortDesc,
+    category,
+    reviews,
+  } = product;
 
   const relatedProducts = products.filter((item) => item.category === category);
 
@@ -61,8 +68,8 @@ const ProductDetails = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [product]);
-  
-  let avgRating = 0
+
+  let avgRating = 0;
   return (
     <Helmet title={productName}>
       <CommonSection title={productName} />
@@ -155,19 +162,15 @@ const ProductDetails = () => {
               ) : (
                 <div className="product__review mt-5">
                   <div className="review__wrapper">
-                    
                     <ul>
                       {reviews.map((item, index) => (
                         <li key={index} className="mb-4">
                           <h6>{item.reviewUser}</h6>
-                          <span>
-                            {item.rating}
-                          </span>
+                          <span>{item.rating}</span>
                           <p>{item.reviewMessage}</p>
                         </li>
                       ))}
                     </ul>
-                    
 
                     <div className="review__form">
                       <h4>Leave Your Experience</h4>
